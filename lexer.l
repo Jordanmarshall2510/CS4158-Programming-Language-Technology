@@ -1,24 +1,35 @@
+%{
+	// C code here
+	#include <stdlib.h>
+	#include <string.h>
+	#include "parser.tab.h"
+%}
+
+%option noyywrap
+%option caseless
+%option yylineno
+
 /* Tokens */
 %%
-[\t ]+ ;		        //Ignore spaces
-BEGINING                { printf("BEGINING\n"); }	        
-BODY                    { printf("BODY\n"); }          
-END                     { printf("END\n"); }          
-MOVE                    { printf("MOVE\n"); }         
-ADD                     { printf("ADD\n"); }  
-TO	                    { printf("TO\n"); }      
-INPUT                   { printf("INPUT\n"); }      
-PRINT     		        { printf("PRINT\n"); }      
-[Xx]+                   {  }
-;                       {  }
-\.                      {  }
-[A-Za-z][A-Za-z0-9\-]*  {  }
-\"(\\.|[^"\\])*\"       {  }
-[0-9]+                  {  }
-.                       {  }
+[\t\n]+ ;		        //Ignore spaces and newline
+BEGINING                { return BEGINING; }	        
+BODY                    { return BODY; }          
+END                     { return END; }          
+MOVE                    { return MOVE; }         
+ADD                     { return ADD; }  
+TO	                    { return TO; }      
+INPUT                   { return INPUT; }      
+PRINT     		        { return PRINT; }
+\.                      { return TERMINATOR; }
+\"(\\.|[^"\\])*\"       { return STRING; } 
+;                       { return SEMICOLON; }
+.                       { return 0; }     
+[Xx]+                   { yylval.size=strlen(yytext); return INT_SIZE; }
+[A-Za-z][A-Za-z0-9\-]*  { yylval.id = yytext; return IDENTIFIER; }
+(\-?|\+)[0-9]+          { yylval.number=atoi(yytext); return INTEGER; }
 %%
 
 int main(int argc, char **argv)
 {
-    yylex();
+    yylex ();
 }
