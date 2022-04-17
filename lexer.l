@@ -28,8 +28,3 @@ PRINT     		        { return PRINT; }
 [A-Za-z][A-Za-z0-9\-]*  { yylval.id = yytext; return IDENTIFIER; }
 (\-?|\+)[0-9]+          { yylval.number=atoi(yytext); return INTEGER; }
 %%
-
-int main(int argc, char **argv)
-{
-    yylex ();
-}

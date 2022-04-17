@@ -3,21 +3,34 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include<stdbool.h>  
     
 	extern int yylex();
 	extern int yyparse();
+    extern int yylineno;
     extern FILE *yyin;
 
     // Declarations
     void yyerror(char *s);
     void trimVariable(char *variable);
     void createVariable(int variableSize, char *variableName);
-    void checkVariable(char *variable);
+    bool checkVariable(char *variable);
     void moveIntegerToVariable(int integer, char *variable);
     void moveVariableToVariable(char *variableOne, char *variableTwo);
+
+    // Tables
+	#define MAX_VARIABLES 100
+	char variableArray[MAX_VARIABLES][32];
+	int variableSizes[MAX_VARIABLES];
+	int numberOfVariables = 0;
+
 %}
 
-%union {int number; int size; char* id;}
+%union {
+    int number;
+    int size;
+    char* id;
+}
 %start start
 %token <number> INTEGER
 %token <size> INT_SIZE
@@ -59,7 +72,7 @@ int main(int argc, char *argv[])
 // Error handling
 void yyerror(char *s)
 {   
-	fprintf(stderr, "%s\n", s);
+	fprintf(stderr, "Error (Line %d): %s\n", yylineno, s);
 }
 
 // Trim variable
@@ -75,13 +88,35 @@ void trimVariable(char *variable)
 // Creates a variable
 void createVariable(int variableSize, char *variableName)
 {
+    trimVariable(variableName);
+    
+    // If variable does not exit
+    if(checkVariable(variableName) == false)
+    {
+        strcpy(variableArray[numberOfVariables], variableName);
+        variableSizes[numberOfVariables] = variableSize;
+        numberOfVariables++;
 
+        for(int j = 0; j < numberOfVariables; j++) {
+            printf("%s ", variableArray[j]);
+        }
+        printf("\n");
+    }
+    else
+    {
+        printf("Warning (L%d): Identifier %s already initialised.\n", yylineno, variableName); 
+    }
 }
 
-// Check if variable is initialised
-void checkVariable(char *variable)
+// Check if variable is already initialised
+bool checkVariable(char *variable)
 {
-
+    for (int i = 0; i < numberOfVariables; i++) {
+        if (strcmp(variable, variableArray[i]) == 0) {
+            return 1;
+        }
+    }
+    return false;
 }
 
 // Assigns an integer to variable

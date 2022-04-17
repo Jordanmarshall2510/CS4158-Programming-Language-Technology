@@ -6,7 +6,7 @@ bison -d parser.y
 
 # Compiles C files
 gcc -c lex.yy.c parser.tab.c
-gcc -o output lex.yy.o parser.tab.o -lfl
+gcc -o output lex.yy.o parser.tab.o -ll
 
 # Execute output
 ./output < sample.jibuc
