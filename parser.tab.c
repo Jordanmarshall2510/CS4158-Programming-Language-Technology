@@ -72,7 +72,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include<stdbool.h>  
+    #include <stdbool.h> 
     
 	extern int yylex();
 	extern int yyparse();
@@ -83,9 +83,13 @@
     void yyerror(char *s);
     void trimVariable(char *variable);
     void createVariable(int variableSize, char *variableName);
-    bool checkVariable(char *variable);
+    void checkVariable(char *variable);
+    bool isVariable(char *variable);
+    int getVariableSizeFromArray(char *variable);
+    void getFirstVariable(char *variable);
     void moveIntegerToVariable(int integer, char *variable);
     void moveVariableToVariable(char *variableOne, char *variableTwo);
+    int getNumberOfDigitsInInteger(int integer);
 
     // Tables
 	#define MAX_VARIABLES 100
@@ -94,7 +98,7 @@
 	int numberOfVariables = 0;
 
 
-#line 98 "parser.tab.c"
+#line 102 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -163,13 +167,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 29 "parser.y"
+#line 33 "parser.y"
 
     int number;
     int size;
     char* id;
 
-#line 173 "parser.tab.c"
+#line 177 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -546,9 +550,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    41,    41,    42,    43,    44,    45,    46,    47,    48,
-      48,    48,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61
+       0,    45,    45,    46,    47,    48,    49,    50,    51,    52,
+      52,    52,    52,    53,    54,    55,    56,    57,    58,    59,
+      60,    61,    62,    63,    64,    65
 };
 #endif
 
@@ -1366,133 +1370,133 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 41 "parser.y"
+#line 45 "parser.y"
                                                  {}
-#line 1372 "parser.tab.c"
+#line 1376 "parser.tab.c"
     break;
 
   case 3:
-#line 42 "parser.y"
+#line 46 "parser.y"
                                          {}
-#line 1378 "parser.tab.c"
+#line 1382 "parser.tab.c"
     break;
 
   case 4:
-#line 43 "parser.y"
+#line 47 "parser.y"
                        {}
-#line 1384 "parser.tab.c"
+#line 1388 "parser.tab.c"
     break;
 
   case 5:
-#line 44 "parser.y"
+#line 48 "parser.y"
                                                { createVariable((yyvsp[-2].size), (yyvsp[-1].id)); }
-#line 1390 "parser.tab.c"
+#line 1394 "parser.tab.c"
     break;
 
   case 6:
-#line 45 "parser.y"
+#line 49 "parser.y"
                                      {}
-#line 1396 "parser.tab.c"
+#line 1400 "parser.tab.c"
     break;
 
   case 7:
-#line 46 "parser.y"
+#line 50 "parser.y"
                           {}
-#line 1402 "parser.tab.c"
+#line 1406 "parser.tab.c"
     break;
 
   case 8:
-#line 47 "parser.y"
+#line 51 "parser.y"
                       {}
-#line 1408 "parser.tab.c"
+#line 1412 "parser.tab.c"
     break;
 
   case 12:
-#line 48 "parser.y"
+#line 52 "parser.y"
                                            {}
-#line 1414 "parser.tab.c"
+#line 1418 "parser.tab.c"
     break;
 
   case 13:
-#line 49 "parser.y"
+#line 53 "parser.y"
                                 {}
-#line 1420 "parser.tab.c"
+#line 1424 "parser.tab.c"
     break;
 
   case 14:
-#line 50 "parser.y"
+#line 54 "parser.y"
                                            {}
-#line 1426 "parser.tab.c"
+#line 1430 "parser.tab.c"
     break;
 
   case 15:
-#line 51 "parser.y"
+#line 55 "parser.y"
                                                  { checkVariable((yyvsp[-2].id)); }
-#line 1432 "parser.tab.c"
+#line 1436 "parser.tab.c"
     break;
 
   case 16:
-#line 52 "parser.y"
+#line 56 "parser.y"
                                     {}
-#line 1438 "parser.tab.c"
+#line 1442 "parser.tab.c"
     break;
 
   case 17:
-#line 53 "parser.y"
+#line 57 "parser.y"
                                         { checkVariable((yyvsp[-1].id)); }
-#line 1444 "parser.tab.c"
+#line 1448 "parser.tab.c"
     break;
 
   case 18:
-#line 54 "parser.y"
+#line 58 "parser.y"
                                 {}
-#line 1450 "parser.tab.c"
+#line 1454 "parser.tab.c"
     break;
 
   case 19:
-#line 55 "parser.y"
+#line 59 "parser.y"
                                       { checkVariable((yyvsp[-1].id)); }
-#line 1456 "parser.tab.c"
+#line 1460 "parser.tab.c"
     break;
 
   case 20:
-#line 56 "parser.y"
+#line 60 "parser.y"
                                                  { checkVariable((yyvsp[-2].id)); }
-#line 1462 "parser.tab.c"
+#line 1466 "parser.tab.c"
     break;
 
   case 21:
-#line 57 "parser.y"
+#line 61 "parser.y"
                                                       { moveIntegerToVariable((yyvsp[-3].number), (yyvsp[-1].id)); }
-#line 1468 "parser.tab.c"
+#line 1472 "parser.tab.c"
     break;
 
   case 22:
-#line 58 "parser.y"
+#line 62 "parser.y"
                                                            { moveVariableToVariable((yyvsp[-3].id), (yyvsp[-1].id)); }
-#line 1474 "parser.tab.c"
+#line 1478 "parser.tab.c"
     break;
 
   case 23:
-#line 59 "parser.y"
+#line 63 "parser.y"
                                                      { moveIntegerToVariable((yyvsp[-3].number), (yyvsp[-1].id)); }
-#line 1480 "parser.tab.c"
+#line 1484 "parser.tab.c"
     break;
 
   case 24:
-#line 60 "parser.y"
+#line 64 "parser.y"
                                                           { moveVariableToVariable((yyvsp[-3].id), (yyvsp[-1].id)); }
-#line 1486 "parser.tab.c"
+#line 1490 "parser.tab.c"
     break;
 
   case 25:
-#line 61 "parser.y"
+#line 65 "parser.y"
                                { exit(EXIT_SUCCESS); }
-#line 1492 "parser.tab.c"
+#line 1496 "parser.tab.c"
     break;
 
 
-#line 1496 "parser.tab.c"
+#line 1500 "parser.tab.c"
 
       default: break;
     }
@@ -1724,7 +1728,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 62 "parser.y"
+#line 66 "parser.y"
 
 
 int main(int argc, char *argv[])
@@ -1757,7 +1761,7 @@ void createVariable(int variableSize, char *variableName)
     trimVariable(variableName);
     
     // If variable does not exist
-    if(checkVariable(variableName) == false)
+    if(isVariable(variableName) == false)
     {
         strcpy(variableArray[numberOfVariables], variableName);
         variableSizes[numberOfVariables] = variableSize;
@@ -1765,13 +1769,25 @@ void createVariable(int variableSize, char *variableName)
     }
     else
     {
-        printf("Warning (L%d): Identifier %s already initialised.\n", yylineno, variableName); 
+        printf("Warning (Line %d): Variable %s already initialised.\n", yylineno, variableName); 
     }
 }
 
 // Check if variable is already initialised
-bool checkVariable(char *variable)
+void checkVariable(char *variable)
 {
+    trimVariable(variable);
+    if (isVariable(variable) == false) {
+        printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variable);
+    }
+}
+
+bool isVariable(char *variable)
+{
+    if (strstr(variable, ";") != NULL) {
+        getFirstVariable(variable);
+    }
+
     for (int i = 0; i < numberOfVariables; i++) {
         if (strcmp(variable, variableArray[i]) == 0) {
             return true;
@@ -1780,14 +1796,69 @@ bool checkVariable(char *variable)
     return false;
 }
 
+int getVariableSizeFromArray(char *variable) {
+    for (int i = 0; i < numberOfVariables; i++) {
+        if (strcmp(variable, variableArray[i]) == 0) {
+            return variableSizes[i];
+        }
+    }
+    return -1;
+}
+
+void getFirstVariable(char *variable) {
+    for (int i = 0; i < strlen(variable); i++) {
+        if (variable[i] == ';' || variable[i] == ' ') {
+            variable[i] = '\0';
+            break;
+        }
+    }
+}
+
 // Assigns an integer to variable
 void moveIntegerToVariable(int integer, char *variable)
 {
+    trimVariable(variable);
+    int size = getVariableSizeFromArray(variable);
 
+    if (size > -1) {
+        int inputDigits = getNumberOfDigitsInInteger(integer);
+
+        if (inputDigits > size) {
+            printf("Warning (Line %d): Integer is too large. Expected %d digits or less, is %d.\n", yylineno, size, inputDigits);
+        }
+    } else {
+        printf("Warning (Line %d): Integer cannot be assigned. Variable %s not initialised.\n", yylineno, variable);
+    }
 }
 
 // Assigns a variable to a variable
 void moveVariableToVariable(char *variableOne, char *variableTwo)
 {
+    getFirstVariable(variableOne);
+    trimVariable(variableTwo);
 
+    if (isVariable(variableOne)) {
+        if (isVariable(variableTwo)) {
+            int size1 = getVariableSizeFromArray(variableOne);
+            int size2 = getVariableSizeFromArray(variableTwo);
+
+            if (size1 > size2) {
+                printf("Warning (Line %d): Moving %s (%d digits) to %s (%d digits).\n", yylineno, variableOne, size1, variableTwo, size2);
+            }
+        } else {
+            printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableTwo);
+        }
+    } else {
+        printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableOne);
+    }
+}
+
+int getNumberOfDigitsInInteger(int integer)
+{
+    int i=0;
+    for(i=0; integer!=0; i++)  
+    {  
+        integer=integer/10;   
+    } 
+    return i;  
 }

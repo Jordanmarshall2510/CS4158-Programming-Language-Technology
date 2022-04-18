@@ -3,7 +3,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include<stdbool.h>  
+    #include <stdbool.h> 
     
 	extern int yylex();
 	extern int yyparse();
@@ -14,9 +14,13 @@
     void yyerror(char *s);
     void trimVariable(char *variable);
     void createVariable(int variableSize, char *variableName);
-    bool checkVariable(char *variable);
+    void checkVariable(char *variable);
+    bool isVariable(char *variable);
+    int getVariableSizeFromArray(char *variable);
+    void getFirstVariable(char *variable);
     void moveIntegerToVariable(int integer, char *variable);
     void moveVariableToVariable(char *variableOne, char *variableTwo);
+    int getNumberOfDigitsInInteger(int integer);
 
     // Tables
 	#define MAX_VARIABLES 100
@@ -91,7 +95,7 @@ void createVariable(int variableSize, char *variableName)
     trimVariable(variableName);
     
     // If variable does not exist
-    if(checkVariable(variableName) == false)
+    if(isVariable(variableName) == false)
     {
         strcpy(variableArray[numberOfVariables], variableName);
         variableSizes[numberOfVariables] = variableSize;
@@ -99,13 +103,25 @@ void createVariable(int variableSize, char *variableName)
     }
     else
     {
-        printf("Warning (L%d): Identifier %s already initialised.\n", yylineno, variableName); 
+        printf("Warning (Line %d): Variable %s already initialised.\n", yylineno, variableName); 
     }
 }
 
 // Check if variable is already initialised
-bool checkVariable(char *variable)
+void checkVariable(char *variable)
 {
+    trimVariable(variable);
+    if (isVariable(variable) == false) {
+        printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variable);
+    }
+}
+
+bool isVariable(char *variable)
+{
+    if (strstr(variable, ";") != NULL) {
+        getFirstVariable(variable);
+    }
+
     for (int i = 0; i < numberOfVariables; i++) {
         if (strcmp(variable, variableArray[i]) == 0) {
             return true;
@@ -114,14 +130,69 @@ bool checkVariable(char *variable)
     return false;
 }
 
+int getVariableSizeFromArray(char *variable) {
+    for (int i = 0; i < numberOfVariables; i++) {
+        if (strcmp(variable, variableArray[i]) == 0) {
+            return variableSizes[i];
+        }
+    }
+    return -1;
+}
+
+void getFirstVariable(char *variable) {
+    for (int i = 0; i < strlen(variable); i++) {
+        if (variable[i] == ';' || variable[i] == ' ') {
+            variable[i] = '\0';
+            break;
+        }
+    }
+}
+
 // Assigns an integer to variable
 void moveIntegerToVariable(int integer, char *variable)
 {
+    trimVariable(variable);
+    int size = getVariableSizeFromArray(variable);
 
+    if (size > -1) {
+        int inputDigits = getNumberOfDigitsInInteger(integer);
+
+        if (inputDigits > size) {
+            printf("Warning (Line %d): Integer is too large. Expected %d digits or less, is %d.\n", yylineno, size, inputDigits);
+        }
+    } else {
+        printf("Warning (Line %d): Integer cannot be assigned. Variable %s not initialised.\n", yylineno, variable);
+    }
 }
 
 // Assigns a variable to a variable
 void moveVariableToVariable(char *variableOne, char *variableTwo)
 {
+    getFirstVariable(variableOne);
+    trimVariable(variableTwo);
 
+    if (isVariable(variableOne)) {
+        if (isVariable(variableTwo)) {
+            int size1 = getVariableSizeFromArray(variableOne);
+            int size2 = getVariableSizeFromArray(variableTwo);
+
+            if (size1 > size2) {
+                printf("Warning (Line %d): Moving %s (%d digits) to %s (%d digits).\n", yylineno, variableOne, size1, variableTwo, size2);
+            }
+        } else {
+            printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableTwo);
+        }
+    } else {
+        printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableOne);
+    }
+}
+
+int getNumberOfDigitsInInteger(int integer)
+{
+    int i=0;
+    for(i=0; integer!=0; i++)  
+    {  
+        integer=integer/10;   
+    } 
+    return i;  
 }
