@@ -35,7 +35,7 @@
 %token <number> INTEGER
 %token <size> INT_SIZE
 %token <id> IDENTIFIER
-%token BEGINING BODY END MOVE ADD TO INPUT PRINT STRING SEMICOLON TERMINATOR INVALID
+%token BEGINING BODY END MOVE ADD INPUT PRINT TO SEMICOLON TERMINATOR STRING
 
 %%
 start:          BEGINING TERMINATOR declarations {}
@@ -90,17 +90,12 @@ void createVariable(int variableSize, char *variableName)
 {
     trimVariable(variableName);
     
-    // If variable does not exit
+    // If variable does not exist
     if(checkVariable(variableName) == false)
     {
         strcpy(variableArray[numberOfVariables], variableName);
         variableSizes[numberOfVariables] = variableSize;
         numberOfVariables++;
-
-        for(int j = 0; j < numberOfVariables; j++) {
-            printf("%s ", variableArray[j]);
-        }
-        printf("\n");
     }
     else
     {
@@ -113,7 +108,7 @@ bool checkVariable(char *variable)
 {
     for (int i = 0; i < numberOfVariables; i++) {
         if (strcmp(variable, variableArray[i]) == 0) {
-            return 1;
+            return true;
         }
     }
     return false;
