@@ -111,37 +111,47 @@ void createVariable(int variableSize, char *variableName)
 void checkVariable(char *variable)
 {
     trimVariable(variable);
-    if (isVariable(variable) == false) {
+    if (isVariable(variable) == false) 
+    {
         printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variable);
     }
 }
 
 bool isVariable(char *variable)
 {
-    if (strstr(variable, ";") != NULL) {
+    if (strstr(variable, ";") != NULL) 
+    {
         getFirstVariable(variable);
     }
 
-    for (int i = 0; i < numberOfVariables; i++) {
-        if (strcmp(variable, variableArray[i]) == 0) {
+    for (int i = 0; i < numberOfVariables; i++) 
+    {
+        if (strcmp(variable, variableArray[i]) == 0) 
+        {
             return true;
         }
     }
     return false;
 }
 
-int getVariableSizeFromArray(char *variable) {
-    for (int i = 0; i < numberOfVariables; i++) {
-        if (strcmp(variable, variableArray[i]) == 0) {
+int getVariableSizeFromArray(char *variable) 
+{
+    for (int i = 0; i < numberOfVariables; i++) 
+    {
+        if (strcmp(variable, variableArray[i]) == 0) 
+        {
             return variableSizes[i];
         }
     }
     return -1;
 }
 
-void getFirstVariable(char *variable) {
-    for (int i = 0; i < strlen(variable); i++) {
-        if (variable[i] == ';' || variable[i] == ' ') {
+void getFirstVariable(char *variable) 
+{
+    for (int i = 0; i < strlen(variable); i++) 
+    {
+        if (variable[i] == ';' || variable[i] == ' ') 
+        {
             variable[i] = '\0';
             break;
         }
@@ -154,13 +164,17 @@ void moveIntegerToVariable(int integer, char *variable)
     trimVariable(variable);
     int size = getVariableSizeFromArray(variable);
 
-    if (size > -1) {
+    if (size > -1) 
+    {
         int inputDigits = getNumberOfDigitsInInteger(integer);
 
-        if (inputDigits > size) {
+        if (inputDigits > size) 
+        {
             printf("Warning (Line %d): Integer is too large. Expected %d digits or less, is %d.\n", yylineno, size, inputDigits);
         }
-    } else {
+    } 
+    else 
+    {
         printf("Warning (Line %d): Integer cannot be assigned. Variable %s not initialised.\n", yylineno, variable);
     }
 }
@@ -171,18 +185,25 @@ void moveVariableToVariable(char *variableOne, char *variableTwo)
     getFirstVariable(variableOne);
     trimVariable(variableTwo);
 
-    if (isVariable(variableOne)) {
-        if (isVariable(variableTwo)) {
+    if (isVariable(variableOne)) 
+    {
+        if (isVariable(variableTwo)) 
+        {
             int size1 = getVariableSizeFromArray(variableOne);
             int size2 = getVariableSizeFromArray(variableTwo);
 
-            if (size1 > size2) {
+            if (size1 > size2) 
+            {
                 printf("Warning (Line %d): Moving %s (%d digits) to %s (%d digits).\n", yylineno, variableOne, size1, variableTwo, size2);
             }
-        } else {
+        } 
+        else 
+        {
             printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableTwo);
         }
-    } else {
+    } 
+    else 
+    {
         printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableOne);
     }
 }
