@@ -1,5 +1,4 @@
 %{
-    /* Limited sentence recogniser */
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
@@ -43,31 +42,49 @@
 
 %%
 start:          BEGINING TERMINATOR declarations {}
+                ;
 declarations:   declaration declarations {}
                 | body {}
+                ;
 declaration:    INT_SIZE IDENTIFIER TERMINATOR { createVariable($1, $2); }
+                ;
 body:           BODY TERMINATOR code {}
+                ;
 code:           line code {}
                 | end {}
-line:           print | input | move | add {}
-print:          PRINT printStmt {}
-printStmt:      STRING SEMICOLON printStmt {}
-                | IDENTIFIER SEMICOLON printStmt { checkVariable($1); }
+                ;
+line:           print 
+                | input {}
+                | move {}
+                | add {}
+                ;
+print:          PRINT printStatement {}
+                ;
+printStatement: STRING SEMICOLON printStatement {}
+                | IDENTIFIER SEMICOLON printStatement { checkVariable($1); }
                 | STRING TERMINATOR {}
                 | IDENTIFIER TERMINATOR { checkVariable($1); }
-input:          INPUT inputStmt {}
-inputStmt:      IDENTIFIER TERMINATOR { checkVariable($1); }
-                | IDENTIFIER SEMICOLON inputStmt { checkVariable($1); }
+                ;
+input:          INPUT inputStatement {}
+                ;
+inputStatement: IDENTIFIER TERMINATOR { checkVariable($1); }
+                | IDENTIFIER SEMICOLON inputStatement { checkVariable($1); }
+                ;
 move:           MOVE INTEGER TO IDENTIFIER TERMINATOR { moveIntegerToVariable($2, $4); }
                 | MOVE IDENTIFIER TO IDENTIFIER TERMINATOR { moveVariableToVariable($2, $4); }
+                ;
 add:            ADD INTEGER TO IDENTIFIER TERMINATOR { moveIntegerToVariable($2, $4); }
                 | ADD IDENTIFIER TO IDENTIFIER TERMINATOR { moveVariableToVariable($2, $4); }
-end:            END TERMINATOR { exit(EXIT_SUCCESS); }
+                ;
+end:            END TERMINATOR {exit(EXIT_SUCCESS);}
+                ;
 %%
 
+// Main function
 int main(int argc, char *argv[])
 {
-	do{
+	do
+    {
         yyparse();
     }
 	while(!feof(yyin));
@@ -76,10 +93,10 @@ int main(int argc, char *argv[])
 // Error handling
 void yyerror(char *s)
 {   
-	fprintf(stderr, "Error (Line %d): %s\n", yylineno, s);
+	fprintf(stderr, "Error [Line %d]: %s.\n", yylineno, s);
 }
 
-// Trim variable
+// Trim variable by removing terminator
 void trimVariable(char *variable)
 {
     int lastCharIndex = strlen(variable)-1;
@@ -103,7 +120,7 @@ void createVariable(int variableSize, char *variableName)
     }
     else
     {
-        printf("Warning (Line %d): Variable %s already initialised.\n", yylineno, variableName); 
+        fprintf(stderr, "Warning [Line %d]: Variable %s is already initialised.\n", yylineno, variableName); 
     }
 }
 
@@ -113,10 +130,11 @@ void checkVariable(char *variable)
     trimVariable(variable);
     if (isVariable(variable) == false) 
     {
-        printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variable);
+        fprintf(stderr, "Warning [Line %d]: Variable %s is not initialised.\n", yylineno, variable);
     }
 }
 
+// Check variable is declared
 bool isVariable(char *variable)
 {
     if (strstr(variable, ";") != NULL) 
@@ -134,6 +152,7 @@ bool isVariable(char *variable)
     return false;
 }
 
+// Gets variable size from table array
 int getVariableSizeFromArray(char *variable) 
 {
     for (int i = 0; i < numberOfVariables; i++) 
@@ -146,6 +165,7 @@ int getVariableSizeFromArray(char *variable)
     return -1;
 }
 
+// Gets first variable from statement using ; delimiter.
 void getFirstVariable(char *variable) 
 {
     for (int i = 0; i < strlen(variable); i++) 
@@ -170,12 +190,12 @@ void moveIntegerToVariable(int integer, char *variable)
 
         if (inputDigits > size) 
         {
-            printf("Warning (Line %d): Integer is too large. Expected %d digits or less, is %d.\n", yylineno, size, inputDigits);
+           fprintf(stderr, "Warning [Line %d]: Integer is too large. Expected %d digits or less, is %d.\n", yylineno, size, inputDigits);
         }
     } 
     else 
     {
-        printf("Warning (Line %d): Integer cannot be assigned. Variable %s not initialised.\n", yylineno, variable);
+       fprintf(stderr, "Warning [Line %d]: Variable %s is not initialised. Integer cannot be assigned.\n", yylineno, variable);
     }
 }
 
@@ -192,22 +212,23 @@ void moveVariableToVariable(char *variableOne, char *variableTwo)
             int size1 = getVariableSizeFromArray(variableOne);
             int size2 = getVariableSizeFromArray(variableTwo);
 
-            if (size1 > size2) 
+            if (size2 < size1) 
             {
-                printf("Warning (Line %d): Moving %s (%d digits) to %s (%d digits).\n", yylineno, variableOne, size1, variableTwo, size2);
+               fprintf(stderr, "Warning [Line %d]: Integer overflow while moving %s (%d digits) to %s (%d digits).\n", yylineno, variableOne, size1, variableTwo, size2);
             }
         } 
         else 
         {
-            printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableTwo);
+           fprintf(stderr, "Warning (Line %d): Variable %s is not initialised.\n", yylineno, variableTwo);
         }
     } 
     else 
     {
-        printf("Warning (Line %d): Variable %s not initialised.\n", yylineno, variableOne);
+       fprintf(stderr, "Warning (Line %d): Variable %s is not initialised.\n", yylineno, variableOne);
     }
 }
 
+// Get number of digits of integer.
 int getNumberOfDigitsInInteger(int integer)
 {
     int i=0;
