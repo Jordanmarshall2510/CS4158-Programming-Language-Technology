@@ -1,8 +1,8 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include <string.h>
     #include <stdbool.h> 
+    #include <string.h>
     
 	extern int yylex();
 	extern int yyparse();
@@ -22,9 +22,8 @@
     int getNumberOfDigitsInInteger(int integer);
 
     // Tables
-	#define MAX_VARIABLES 100
-	char variableArray[MAX_VARIABLES][32];
-	int variableSizes[MAX_VARIABLES];
+	char variableArray[100][32];
+	int variableSizes[100];
 	int numberOfVariables = 0;
 
 %}
@@ -32,12 +31,12 @@
 %union {
     int number;
     int size;
-    char* id;
+    char* identifier;
 }
 %start start
 %token <number> INTEGER
 %token <size> INT_SIZE
-%token <id> IDENTIFIER
+%token <identifier> IDENTIFIER
 %token BEGINING BODY END MOVE ADD INPUT PRINT TO SEMICOLON TERMINATOR STRING
 
 %%

@@ -1,2 +1,18 @@
 # CS4168-Programming-Language-Technology
  
+To run parser using the run bash script:
+```
+$   ./run.sh
+```
+
+If run.sh does not have permission to run:
+```
+$    chmod +x ./run.sh
+```
+
+To remove files being generated run the clean bash script:
+```
+$    ./clean.sh
+```
+
+Change the contents of the test.jibuc file to find syntax warnings/errors.
