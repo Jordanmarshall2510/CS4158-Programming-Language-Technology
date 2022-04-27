@@ -20,4 +20,4 @@ To remove files being generated run the clean bash script:
 $    ./clean.sh
 ```
 
-Change the contents of the test.jibuc file to find syntax warnings/errors.
+The current test file is well-formed and should have no output. Change the contents of the test.jibuc file to find syntax warnings/errors.
